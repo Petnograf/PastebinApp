@@ -13,7 +13,7 @@ PASTEBIN_API_KEY=examplePastebinApiKey
 
 You have 3 different options to run the app.
 
-<!-- Running the app using VS Code Debugger -->
+**Running the app using VS Code Debugger**
 1. If you want to launch the app with the VS Code debugger you might need to add a file to the .vscode folder in the root of the app. The file name should be "launch.json" and the following code should be copied into it:
 
 {
@@ -31,10 +31,10 @@ You have 3 different options to run the app.
 
 2. In VS Code select the "Run and Debug" section and start the debugger in the top left corner (Green start button)
 
-<!-- Running the App from a terminal in VS Code -->
+**Running the App from a terminal in VS Code**
 1. If you are not using the debugger you can run the app from the terminal. Open a terminal in VS Code and run the following command: "react-native run-ios". VS Code should open the simulator automatically and start building the app.
 
-<!-- Running the App from Xcode -->
+**Running the App from Xcode**
 1. You can also run the app using Xcode. You should open Xcode and select "Open a project or file"
 
 2. You need to open the workspace file for the app. It is found in root > ios > PastebinApp.xcworkspace.
