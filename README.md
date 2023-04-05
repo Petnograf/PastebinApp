@@ -4,18 +4,23 @@ Hello and welcome to the Pastebin App.
 
 Here is a step by step on how to run the app. Open the root folder in VS Code. You should open a terminal from the root of the app and type in the following commands.
 
-1. npm install && cd ios && pod install
-2. cd ../
+```
+npm install && cd ios && pod install
+cd ../
+```
 
 3. Add env file to the app
 You should create a .env file in the root of the app and add your Pastebin API key:
+```
 PASTEBIN_API_KEY=examplePastebinApiKey
+```
 
 You have 3 different options to run the app.
 
 **Running the app using VS Code Debugger**
 1. If you want to launch the app with the VS Code debugger you might need to add a file to the .vscode folder in the root of the app. The file name should be "launch.json" and the following code should be copied into it:
 
+```
 {
     "version": "0.2.0",
     "configurations": [
@@ -28,6 +33,7 @@ You have 3 different options to run the app.
         }
     ]
 }
+```
 
 2. In VS Code select the "Run and Debug" section and start the debugger in the top left corner (Green start button)
 
