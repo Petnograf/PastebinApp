@@ -75,14 +75,14 @@ const ListItemDetails = ({setState, state, setScreen, user, onReloadList}) => {
     <View style={styles.mainContainer}>
       <Text style={styles.text}>Title</Text>
       <TextInput
-        disabled={!state.isUpdate}
+        editable={!state.isUpdate}
         onChangeText={onChangeTitle}
         placeholder="Title"
         value={state.title}
       />
       <Text style={[styles.text, styles.marginTop]}>Description</Text>
       <TextInput
-        disabled={!state.isUpdate}
+        editable={!state.isUpdate}
         type="large"
         onChangeText={onChangeDescription}
         placeholder="Description"

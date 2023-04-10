@@ -30,7 +30,6 @@ const SignIn = ({navigation}) => {
   const [state, setState] = useState({
     user: undefined,
     password: undefined,
-    userKey: undefined,
   });
 
   function onSignInPress() {
@@ -93,12 +92,14 @@ const SignIn = ({navigation}) => {
     <View style={styles.mainContainer}>
       <Text style={styles.text}>Username</Text>
       <TextInput
+        editable
         onChangeText={onChangeUsername}
         placeholder="Username"
         value={state.user}
       />
       <Text style={styles.text}>Password</Text>
       <TextInput
+        editable
         isPassword
         onChangeText={onChangePassword}
         placeholder="Password"
