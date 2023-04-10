@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Alert, StyleSheet, Text, View} from 'react-native';
 
+import {addPaste} from '../actions/user';
+
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 import Dimensions from '../config/dimensions';
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.marginTop,
   },
 });
-const ListItemDetails = ({setState, state, setScreen}) => {
+const ListItemDetails = ({setState, state, setScreen, user, onReloadList}) => {
   function onChangeTitle(text) {
     setState(prevState => {
       const nextState = {
@@ -40,50 +42,28 @@ const ListItemDetails = ({setState, state, setScreen}) => {
     });
   }
 
-  function onUpdatePastebin() {
-    const tempArray = state.pastesArray;
-    const objIndex = tempArray.findIndex(
-      obj => obj.id === state.itemIdToUpdate,
-    );
-
-    //Update object's fields
-    tempArray[objIndex].title = state.title;
-    tempArray[objIndex].description = state.description;
-    tempArray[objIndex].id = state.itemIdToUpdate;
-
-    setState(prevState => {
-      const nextState = {
-        ...prevState,
-        title: undefined,
-        description: undefined,
-        pastesArray: tempArray,
-        isUpdate: false,
-      };
-      return nextState;
-    });
-    setScreen('ListView');
-  }
-
   function onAddPastebin() {
     if (state.title && state.description) {
-      const tempObject = {
-        title: state.title,
-        description: state.description,
-        id: state.id + 1,
-      };
-      let tempArray = state.pastesArray;
-      tempArray.push(tempObject);
-      setState(prevState => {
-        const nextState = {
-          ...prevState,
-          title: undefined,
-          description: undefined,
-          id: state.id + 1,
-          pastesArray: tempArray,
-        };
-        return nextState;
+      addPaste(user, state.title, state.description)
+      .then(response => {
+        if (response) {
+          setState(prevState => {
+            const nextState = {
+              ...prevState,
+              title: undefined,
+              description: undefined,
+            };
+            return nextState;
+          });
+          onReloadList();
+          setScreen('ListView');
+        }
+      })
+      .catch(error => {
+        Alert.alert('Error', 'Something went wrong with the API call', [
+          {text: 'Oh No :(', onPress: () => {}, style: 'cancel'},
+        ]);
       });
-      setScreen('ListView');
     } else {
       Alert.alert('Error', 'Please input text into both fields', [
         {text: 'Understood', onPress: () => {}, style: 'cancel'},
@@ -95,21 +75,26 @@ const ListItemDetails = ({setState, state, setScreen}) => {
     <View style={styles.mainContainer}>
       <Text style={styles.text}>Title</Text>
       <TextInput
+        disabled={!state.isUpdate}
         onChangeText={onChangeTitle}
         placeholder="Title"
         value={state.title}
       />
       <Text style={[styles.text, styles.marginTop]}>Description</Text>
       <TextInput
+        disabled={!state.isUpdate}
         type="large"
         onChangeText={onChangeDescription}
         placeholder="Description"
         value={state.description}
       />
-      <Button
-        onPress={() => (state.isUpdate ? onUpdatePastebin() : onAddPastebin())}
-        buttonText={state.isUpdate ? 'Update' : 'Add'}
+      {!state.isUpdate && (
+        <Button
+        onPress={() => onAddPastebin()}
+        buttonText={'Add'}
       />
+      )}
+
     </View>
   );
 };

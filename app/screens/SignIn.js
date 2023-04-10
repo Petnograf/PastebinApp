@@ -39,6 +39,14 @@ const SignIn = ({navigation}) => {
         .then(response => {
           // successful signin
           if (response) {
+            setState(prevState => {
+              const nextState = {
+                ...prevState,
+                user: undefined,
+                password: undefined,
+              };
+              return nextState;
+            });
             navigation.navigate('Home');
           }
         })

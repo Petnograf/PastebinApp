@@ -3,6 +3,8 @@ import {ScrollView, StyleSheet, Text, View, Alert} from 'react-native';
 import Button from '../components/Button';
 import Dimensions from '../config/dimensions';
 
+import {deletePaste} from '../actions/user';
+
 import {useQuery} from '@apollo/client';
 import {PASTEBIN_QUERY} from '../gql/Query';
 
@@ -10,15 +12,15 @@ const styles = StyleSheet.create({
   mainContainer: {
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
   },
-  listView: {
-    marginTop: 20,
-    marginBottom: 20,
+  listViewContainer: {
+    marginTop: 15,
+    paddingTop: 10,
+    paddingBottom: 10,
+    maxHeight: '70%',
   },
   listItem: {
-    flex: 1,
     flexDirection: 'row',
     paddingTop: 15,
   },
@@ -35,18 +37,33 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonContainer: {
+    flex: 1,
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
     marginTop: Dimensions.marginTop / 2,
-    height: '30%',
+    height: '20%',
   },
   text: {
     fontSize: 20,
     fontWeight: '500',
   },
 });
+let showTryText = true;
 
-const ListView = ({setState, state, setScreen}) => {
+const ListView = ({setState, state, setScreen, user, onReloadList}) => {
   function onAddItem() {
     setScreen('ListItemDetails');
+  }
+
+  function onRefreshList() {
+    if (showTryText) {
+      Alert.alert('Paste from Web', 'Try adding a paste from web and then press the refresh button!', [
+        {text: 'Alright', onPress: () => {}, style: 'cancel'},
+      ]);
+      showTryText = false;
+    }
+    onReloadList();
   }
 
   // const {data} = useQuery(PASTEBIN_QUERY);
@@ -55,9 +72,9 @@ const ListView = ({setState, state, setScreen}) => {
     setState(prevState => {
       const nextState = {
         ...prevState,
-        title: item.title,
-        description: item.description,
-        itemIdToUpdate: item.id,
+        title: item.paste_title[0],
+        description: item.paste_url[0],
+        itemIdToUpdate: item.paste_key[0],
         isUpdate: true,
       };
       return nextState;
@@ -66,22 +83,19 @@ const ListView = ({setState, state, setScreen}) => {
   }
 
   function onDeleteItem(item) {
-    Alert.alert('Delete', `Are you sure you want to delete ${item.title}?`, [
+    Alert.alert('Delete', `Are you sure you want to delete ${item.paste_title[0]}?`, [
       {text: 'Cancel', onPress: () => {}, style: 'cancel'},
       {
         text: 'Yes',
         onPress: () => {
-          let tempArray = state.pastesArray;
-          const index = tempArray.indexOf(item);
-          if (index > -1) {
-            tempArray.splice(index, 1);
-          }
-          setState(prevState => {
-            const nextState = {
-              ...prevState,
-              pastesArray: tempArray,
-            };
-            return nextState;
+          deletePaste(user, item.paste_key[0])
+          .then(response => {
+            if (response) {
+              onReloadList();
+            }
+          })
+          .catch(error => {
+            console.log(error);
           });
         },
         style: 'destructive',
@@ -91,25 +105,30 @@ const ListView = ({setState, state, setScreen}) => {
 
   return (
     <View style={styles.mainContainer}>
-      <ScrollView contentContainerStyle={styles.listView}>
-        {state.pastesArray.length === 0 ? (
-          <Text>Nothing here yet...</Text>
-        ) : (
-          state.pastesArray.map(item => (
-            <View key={item.id} style={styles.listItem}>
-              <View style={styles.listItemTextContainer}>
-                <Text>{item.title}</Text>
-                <Text>{item.description}</Text>
+      <View style={styles.listViewContainer}>
+        <ScrollView>
+          <Text style={{display: !state.pastesArray ? 'flex' : 'none'}}>Nothing here yet...</Text>
+          {state.pastesArray && (
+            <View>
+              {state.pastesArray.map(item => (
+              <View key={item.paste_key[0]} style={styles.listItem}>
+                <View style={styles.listItemTextContainer}>
+                  <Text>{item.paste_title[0]}</Text>
+                  <Text>{item.paste_url[0]}</Text>
+                </View>
+                <Button type="edit" onPress={() => onEditItem(item)} />
+                <View style={styles.separatorView} />
+                <Button type="delete" onPress={() => onDeleteItem(item)} />
               </View>
-              <Button type="edit" onPress={() => onEditItem(item)} />
-              <View style={styles.separatorView} />
-              <Button type="delete" onPress={() => onDeleteItem(item)} />
+            ))}
             </View>
-          ))
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </View>
       <View style={styles.buttonContainer}>
         <Button type="add" onPress={() => onAddItem()} />
+          <View style={styles.separatorView} />
+        <Button type="refresh" onPress={() => onRefreshList()} />
       </View>
     </View>
   );

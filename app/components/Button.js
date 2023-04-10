@@ -5,6 +5,7 @@ import Dimensions from '../config/dimensions';
 const addIcon = require('../assets/images/add.png');
 const deleteIcon = require('../assets/images/delete.png');
 const editIcon = require('../assets/images/edit.png');
+const refreshIcon = require('../assets/images/refresh.png');
 
 const styles = StyleSheet.create({
   iconButtonContainer: {
@@ -38,6 +39,8 @@ const Button = props => {
 
   function getIcon() {
     switch (type) {
+      case 'refresh':
+        return refreshIcon;
       case 'add':
         return addIcon;
       case 'delete':

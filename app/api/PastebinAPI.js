@@ -22,9 +22,9 @@ class PastebinAPI {
   }
 
   static async userSignIn(body) {
-    const url = `${HOST}/api_login`;
+    const url = `${HOST}/pastebin/api_login`;
     const params = {
-      body: body,
+      body,
     };
     const options = {
       method: 'POST',
@@ -35,7 +35,7 @@ class PastebinAPI {
   }
 
   static async getUserListOfPastes(body) {
-    const url = `${HOST}/api_login`;
+    const url = `${HOST}/pastebin/list_pastes`;
     const params = {
       body: body,
     };
@@ -48,20 +48,7 @@ class PastebinAPI {
   }
 
   static async addPastebin(body) {
-    const url = `${HOST}/api_login`;
-    const params = {
-      body: body,
-    };
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: this.jsonHeaders(),
-    };
-    return submitJsonRequest(url, options);
-  }
-
-  static async editPastebin(body) {
-    const url = `${HOST}/api_login`;
+    const url = `${HOST}/pastebin/add_paste`;
     const params = {
       body: body,
     };
@@ -74,7 +61,7 @@ class PastebinAPI {
   }
 
   static async deletePastebin(body) {
-    const url = `${HOST}/api_login`;
+    const url = `${HOST}/pastebin/delete_paste`;
     const params = {
       body: body,
     };

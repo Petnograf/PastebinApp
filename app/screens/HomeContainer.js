@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Alert, Text} from 'react-native';
 import {connect} from 'react-redux';
 
-import {getUserListOfPastes} from '../actions/user';
+import {getUserListOfPastes, userSignOut} from '../actions/user';
+import {transformPastes} from '../util';
 
 // components
 import HeaderBar from '../components/HeaderBar';
@@ -24,24 +25,8 @@ const HomeContainer = ({navigation, user}) => {
   });
 
   useEffect(() => {
-    getUserListOfPastes(user)
-      .then(response => {
-        // successful signin
-        if (response) {
-          setState(prevState => {
-            const nextState = {
-              ...prevState,
-              pastesArray: response,
-            };
-            return nextState;
-          });
-        }
-      })
-      .catch(error => {
-        // oh no something went wrong
-        console.log(error);
-      });
-  }, [user]);
+    onReloadList();
+  }, []);
 
   const styles = StyleSheet.create({
     mainView: {
@@ -59,8 +44,30 @@ const HomeContainer = ({navigation, user}) => {
   function signOut() {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-      {text: 'Logout', onPress: () => navigation.navigate('SignIn')},
+      {text: 'Logout', onPress: () => {
+        userSignOut();
+        navigation.navigate('SignIn')
+      }},
     ]);
+  }
+
+  function onReloadList() {
+    getUserListOfPastes(user)
+    .then(response => {
+      if (response) {
+        const formattedArray = transformPastes(response);
+        setState(prevState => {
+          const nextState = {
+            ...prevState,
+            pastesArray: formattedArray,
+          };
+          return nextState;
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   function onBackButtonPress() {
@@ -80,11 +87,18 @@ const HomeContainer = ({navigation, user}) => {
     switch (screen) {
       case 'ListView':
         return (
-          <ListView setScreen={setScreen} state={state} setState={setState} />
+          <ListView
+            onReloadList={onReloadList}
+            user={user}
+            setScreen={setScreen}
+            state={state}
+            setState={setState} />
         );
       case 'ListItemDetails':
         return (
           <ListItemDetails
+            onReloadList={onReloadList}
+            user={user}
             setScreen={setScreen}
             setState={setState}
             state={state}

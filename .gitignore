@@ -46,3 +46,4 @@ yarn-error.log
 /vendor/bundle/
 
 .vscode/
+.env

@@ -31,12 +31,13 @@ const styles = StyleSheet.create({
 });
 
 const TextInput = props => {
-  const {ref, type, onChangeText, placeholder, value, style, isPassword} =
+  const {ref, type, onChangeText, placeholder, value, style, isPassword, disabled} =
     props;
 
   if (type === 'large') {
     return (
       <Input
+        editable={!!disabled}
         style={[styles.inputLarge, style]}
         onChangeText={onChangeText}
         keyboardType={'default'}
@@ -50,6 +51,7 @@ const TextInput = props => {
 
   return (
     <Input
+      editable={!!disabled}
       style={[styles.input, style]}
       onChangeText={onChangeText}
       secureTextEntry={isPassword}
