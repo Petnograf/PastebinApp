@@ -9,7 +9,7 @@ npm install && cd ios && pod install
 cd ../
 ```
 
-3. Add env file to the app
+**Add env file to the app**
 You should create a .env file in the root of the app and add your Pastebin API key:
 ```
 PASTEBIN_API_KEY=examplePastebinApiKey
